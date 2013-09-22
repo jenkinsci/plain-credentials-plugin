@@ -3,8 +3,11 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.480.3</version>
+        <version>1.509.2</version>
     </parent>
+    <properties>
+        <maven-hpi-plugin.version>1.99</maven-hpi-plugin.version> <!-- TODO until 1.509.3 -->
+    </properties>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plain-credentials</artifactId>
     <version>1.0-beta-2-SNAPSHOT</version>

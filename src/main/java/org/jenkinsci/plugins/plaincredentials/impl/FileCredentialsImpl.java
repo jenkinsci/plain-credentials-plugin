@@ -25,9 +25,7 @@
 package org.jenkinsci.plugins.plaincredentials.impl;
 
 import com.cloudbees.plugins.credentials.CredentialsDescriptor;
-import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
 import hudson.util.IOException2;
@@ -35,27 +33,31 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import jenkins.model.Jenkins;
 import jenkins.security.CryptoConfidentialKey;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.FileItem;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public final class FileCredentialsImpl extends BaseStandardCredentials implements FileCredentials {
 
     private static final CryptoConfidentialKey KEY = new CryptoConfidentialKey(FileCredentialsImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FileCredentialsImpl.class.getName());
 
-    private final @Nonnull String filename;
+    private final @Nonnull String fileName;
     private final @Nonnull byte[] data;
 
-    @DataBoundConstructor public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull FileItem file) throws IOException {
+    @DataBoundConstructor public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName, @CheckForNull String data) throws IOException {
         super(scope, id, description);
         String name = file.getName();
         if (name.length() > 0) {
-            filename = name.replaceFirst("^.+[/\\\\]", "");
+            this.fileName = name.replaceFirst("^.+[/\\\\]", "");
             byte[] unencrypted = file.get();
             try {
                 this.data = KEY.encrypt().doFinal(unencrypted);
@@ -63,34 +65,33 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
                 throw new IOException2(x);
             }
         } else {
-            FileCredentialsImpl old = findExisting(id);
-            if (old == null) {
-                throw new IllegalArgumentException("must upload a file");
-            }
-            filename = old.filename;
-            data = old.data;
+            this.fileName = fileName;
+            this.data = Base64.decodeBase64(data);
         }
-    }
-
-    private static FileCredentialsImpl findExisting(String id) {
-        for (FileCredentialsImpl existing : CredentialsProvider.lookupCredentials(FileCredentialsImpl.class, Jenkins.getInstance(), null, Collections.<DomainRequirement>emptyList())) {
-            if (existing.getId().equals(id)) {
-                return existing;
-            }
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’", new Object[] {getId(), this.fileName, unencrypted().length, name});
         }
-        return null;
     }
 
     @Override public String getFileName() {
-        return filename;
+        return fileName;
     }
 
-    @Override public InputStream getContent() throws IOException {
+    @Restricted(DoNotUse.class) // for Jelly only
+    public String getData() {
+        return Base64.encodeBase64String(data);
+    }
+
+    private byte[] unencrypted() throws IOException {
         try {
-            return new ByteArrayInputStream(KEY.decrypt().doFinal(data));
+            return KEY.decrypt().doFinal(data);
         } catch (GeneralSecurityException x) {
             throw new IOException2(x);
         }
+    }
+
+    @Override public InputStream getContent() throws IOException {
+        return new ByteArrayInputStream(unencrypted());
     }
 
     @Extension public static class DescriptorImpl extends CredentialsDescriptor {

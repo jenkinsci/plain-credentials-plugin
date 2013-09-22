@@ -34,6 +34,12 @@ THE SOFTWARE.
             </f:entry>
         </j:when>
         <j:otherwise>
+            <f:invisibleEntry>
+                <f:textbox field="fileName"/>
+            </f:invisibleEntry>
+            <f:invisibleEntry>
+                <f:textbox field="data"/>
+            </f:invisibleEntry>
             <f:optionalBlock title="${%upload(instance.fileName)}" inline="true">
                 <f:entry title="${%File}" field="file">
                     <input type="file" name="file" size="40" jsonAware="yes"/>

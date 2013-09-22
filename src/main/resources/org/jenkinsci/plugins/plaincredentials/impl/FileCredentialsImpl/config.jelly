@@ -34,15 +34,11 @@ THE SOFTWARE.
             </f:entry>
         </j:when>
         <j:otherwise>
-            <!-- TODO does not, causes a zero-length file to be loaded:
             <f:optionalBlock title="${%upload(instance.fileName)}" inline="true">
-            -->
                 <f:entry title="${%File}" field="file">
                     <input type="file" name="file" size="40" jsonAware="yes"/>
                 </f:entry>
-            <!--
             </f:optionalBlock>
-            -->
         </j:otherwise>
     </j:choose>
     <f:entry title="${%Description}" field="description">

@@ -25,7 +25,9 @@
 package org.jenkinsci.plugins.plaincredentials.impl;
 
 import com.cloudbees.plugins.credentials.CredentialsDescriptor;
+import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
 import hudson.util.IOException2;
@@ -33,8 +35,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import jenkins.model.Jenkins;
 import jenkins.security.CryptoConfidentialKey;
 import org.apache.commons.fileupload.FileItem;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
@@ -49,20 +53,23 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
 
     @DataBoundConstructor public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull FileItem file) throws IOException {
         super(scope, id, description);
-        filename = file.getName().replaceFirst("^.+[/\\\\]", "");
-        byte[] unencrypted = file.get();
-        try {
-            this.data = KEY.encrypt().doFinal(unencrypted);
-        } catch (GeneralSecurityException x) {
-            throw new IOException2(x);
+        String name = file.getName();
+        if (name.length() > 0) {
+            filename = name.replaceFirst("^.+[/\\\\]", "");
+            byte[] unencrypted = file.get();
+            try {
+                this.data = KEY.encrypt().doFinal(unencrypted);
+            } catch (GeneralSecurityException x) {
+                throw new IOException2(x);
+            }
+        } else {
+            FileCredentialsImpl old = findExisting(id);
+            if (old == null) {
+                throw new IllegalArgumentException("must upload a file");
+            }
+            filename = old.filename;
+            data = old.data;
         }
-        /* TODO failed attempt to handle optional upload:
-        FileCredentialsImpl old = findExisting(id);
-        if (old == null) {
-            throw new IllegalArgumentException("must upload a file");
-        }
-        filename = old.filename;
-        data = old.data;
     }
 
     private static FileCredentialsImpl findExisting(String id) {
@@ -72,7 +79,6 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
             }
         }
         return null;
-        */
     }
 
     @Override public String getFileName() {

@@ -57,7 +57,7 @@ public class FileBinding extends Binding<FileCredentials> {
                 return secret.getRemote();
             }
             @Override public void unbind() throws IOException, InterruptedException {
-                secret.deleteRecursive();
+                secret.delete();
             }
         };
     }

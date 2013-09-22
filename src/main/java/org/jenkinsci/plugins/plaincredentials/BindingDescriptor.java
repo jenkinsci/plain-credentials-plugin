@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.jenkinsci.plugins.plaincredentials.impl;
+package org.jenkinsci.plugins.plaincredentials;
 
 import com.cloudbees.plugins.credentials.CredentialsNameProvider;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
@@ -35,6 +35,10 @@ import hudson.util.ListBoxModel;
 import java.util.Collections;
 import org.kohsuke.stapler.AncestorInPath;
 
+/**
+ * Describes a {@link Binding} kind.
+ * @param <C> type of credentials to be bound
+ */
 public abstract class BindingDescriptor<C extends StandardCredentials> extends Descriptor<Binding<C>> {
 
     protected abstract Class<C> type();

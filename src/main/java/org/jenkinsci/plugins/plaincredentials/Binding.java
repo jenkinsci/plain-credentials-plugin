@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-package org.jenkinsci.plugins.plaincredentials.impl;
+package org.jenkinsci.plugins.plaincredentials;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
+import hudson.ExtensionPoint;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractDescribableImpl;
@@ -36,44 +37,67 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import javax.annotation.Nonnull;
+import org.kohsuke.stapler.DataBoundConstructor;
 
-public abstract class Binding<C extends StandardCredentials> extends AbstractDescribableImpl<Binding<C>> {
+/**
+ * A way of binding a kind of credentials to an environment variable during a build.
+ * @param <C> a kind of credentials
+ */
+public abstract class Binding<C extends StandardCredentials> extends AbstractDescribableImpl<Binding<C>> implements ExtensionPoint {
 
     private final String variable;
     private final String credentialsId;
 
+    /** For use with {@link DataBoundConstructor}. */
     protected Binding(String variable, String credentialsId) {
         this.variable = variable;
         this.credentialsId = credentialsId;
     }
 
+    /** Type token. */
     protected abstract Class<C> type();
 
+    /** Environment variable name. */
     public String getVariable() {
         return variable;
     }
 
+    /** Identifier of the credentials to be bound. */
     public String getCredentialsId() {
         return credentialsId;
     }
 
+    /** Callback for processing during a build. */
     public interface Environment {
 
+        /** Produces the value of the environment variable. */
         String value();
 
+        /** Performs any needed cleanup. */
         void unbind() throws IOException, InterruptedException;
 
     }
 
+    /** Sets up bindings for a build. */
     public abstract Environment bind(@Nonnull AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException;
 
-    protected @Nonnull C getCredentials(@Nonnull Item owner) throws IOException {
+    /**
+     * Looks up the actual credentials.
+     * @param owner the owning item, such as {@link AbstractBuild#getProject}
+     * @return the credentials
+     * @throws FileNotFoundException if the credentials could not be found (for convenience, rather than returning null)
+     */
+    protected final @Nonnull C getCredentials(@Nonnull Item owner) throws IOException {
         for (C c : CredentialsProvider.lookupCredentials(type(), owner, null, Collections.<DomainRequirement>emptyList())) {
             if (c.getId().equals(credentialsId)) {
                 return c;
             }
         }
         throw new FileNotFoundException(credentialsId);
+    }
+
+    @Override public BindingDescriptor<C> getDescriptor() {
+        return (BindingDescriptor<C>) super.getDescriptor();
     }
 
 }

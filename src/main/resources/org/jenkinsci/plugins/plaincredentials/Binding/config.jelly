@@ -23,11 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:entry title="Variable" field="variable">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+    <f:entry title="${%Variable}" field="variable">
         <f:textbox/>
     </f:entry>
-    <f:entry title="Credentials" field="credentialsId">
+    <f:entry title="${%Credentials}" field="credentialsId">
         <f:select/>
     </f:entry>
+    <st:include page="config-details.jelly" optional="true"/>
 </j:jelly>

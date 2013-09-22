@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jenkinsci.plugins.plaincredentials.Binding;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class SecretBuildWrapper extends BuildWrapper {

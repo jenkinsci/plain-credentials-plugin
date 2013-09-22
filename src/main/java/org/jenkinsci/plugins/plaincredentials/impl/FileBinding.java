@@ -30,6 +30,8 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import java.io.IOException;
+import org.jenkinsci.plugins.plaincredentials.Binding;
+import org.jenkinsci.plugins.plaincredentials.BindingDescriptor;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
 import org.kohsuke.stapler.DataBoundConstructor;
 

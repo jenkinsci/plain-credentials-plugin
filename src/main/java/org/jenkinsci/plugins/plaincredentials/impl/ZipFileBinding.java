@@ -36,6 +36,7 @@ import hudson.util.FormValidation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.UUID;
 import org.jenkinsci.plugins.plaincredentials.Binding;
 import org.jenkinsci.plugins.plaincredentials.BindingDescriptor;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
@@ -54,18 +55,19 @@ public class ZipFileBinding extends Binding<FileCredentials> {
     }
 
     @Override public Environment bind(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-        FilePath secrets = build.getBuiltOn().getRootPath().child("secretFiles");
-        secrets.mkdirs();
-        secrets.chmod(/*0700*/448);
         FileCredentials credentials = getCredentials(build.getProject());
-        final FilePath secret = secrets.child(credentials.getFileName());
+        FilePath secrets = build.getBuiltOn().getRootPath().child("secretFiles");
+        final FilePath dir = secrets.child(UUID.randomUUID().toString());
+        dir.mkdirs();
+        secrets.chmod(/*0700*/448);
+        final FilePath secret = dir.child(credentials.getFileName());
         secret.unzipFrom(credentials.getContent());
         return new Environment() {
             @Override public String value() {
                 return secret.getRemote();
             }
             @Override public void unbind() throws IOException, InterruptedException {
-                secret.deleteRecursive();
+                dir.deleteRecursive();
             }
         };
     }

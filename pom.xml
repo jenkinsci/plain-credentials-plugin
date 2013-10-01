@@ -13,7 +13,7 @@
     <version>1.0-beta-4-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Plain Credentials Plugin</name>
-    <description>Allows use of plain strings and files as credentials to be passed to miscellaneous build steps.</description>
+    <description>Allows use of plain strings and files as credentials.</description>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Plain+Credentials+Plugin</url>
     <repositories>
         <repository>
@@ -51,6 +51,7 @@
                 <groupId>org.jenkins-ci.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
                 <configuration>
+                    <compatibleSinceVersion>1.0-beta-4</compatibleSinceVersion>
                     <loggers>
                         <org.jenkinsci.plugins.plaincredentials>FINE</org.jenkinsci.plugins.plaincredentials>
                     </loggers>

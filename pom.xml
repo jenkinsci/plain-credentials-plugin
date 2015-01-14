@@ -3,11 +3,8 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.532.2</version>
+        <version>1.580.1</version>
     </parent>
-    <properties>
-        <maven-hpi-plugin.version>1.99</maven-hpi-plugin.version>
-    </properties>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plain-credentials</artifactId>
     <version>1.1-SNAPSHOT</version>
@@ -43,7 +40,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>credentials</artifactId>
-            <version>1.9.4</version>
+            <version>1.20</version>
         </dependency>
     </dependencies>
     <build>

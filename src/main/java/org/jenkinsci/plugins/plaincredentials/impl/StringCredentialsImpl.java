@@ -24,7 +24,6 @@
 
 package org.jenkinsci.plugins.plaincredentials.impl;
 
-import com.cloudbees.plugins.credentials.CredentialsDescriptor;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
@@ -47,7 +46,7 @@ public final class StringCredentialsImpl extends BaseStandardCredentials impleme
         return secret;
     }
 
-    @Extension public static class DescriptorImpl extends CredentialsDescriptor {
+    @Extension public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
 
         @Override public String getDisplayName() {
             return Messages.StringCredentialsImpl_secret_text();

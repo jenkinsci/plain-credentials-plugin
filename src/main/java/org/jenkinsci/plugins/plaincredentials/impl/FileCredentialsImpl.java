@@ -24,7 +24,6 @@
 
 package org.jenkinsci.plugins.plaincredentials.impl;
 
-import com.cloudbees.plugins.credentials.CredentialsDescriptor;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
@@ -94,7 +93,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
         return new ByteArrayInputStream(unencrypted());
     }
 
-    @Extension public static class DescriptorImpl extends CredentialsDescriptor {
+    @Extension public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
 
         @Override public String getDisplayName() {
             return Messages.FileCredentialsImpl_secret_file();

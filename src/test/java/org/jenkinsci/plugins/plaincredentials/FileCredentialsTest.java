@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 jglick.
+ * Copyright 2015 asotobu.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +39,10 @@ import java.io.UnsupportedEncodingException;
 public class FileCredentialsTest {
 
     @Test(expected = IllegalArgumentException.class)
+    @Issue("JENKINS-30926")
     public void shouldThrowAnExceptionIfFileNameIsBlank() throws IOException {
-        FileCredentials fileCredentials = new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "", new StubFileItem(), "", "");
+        FileCredentials fileCredentials = new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "",
+                new StubFileItem(), "", "");
     }
 
     private class StubFileItem implements FileItem {

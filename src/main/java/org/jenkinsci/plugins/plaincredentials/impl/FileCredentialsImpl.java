@@ -67,6 +67,12 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
             this.fileName = fileName;
             this.data = Base64.decodeBase64(data);
         }
+        if (this.fileName == null || this.fileName.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("No FileName was provided or resolved. " +
+                            "Input file item was %s and input file name was %s.", file.toString(), fileName)
+            );
+        }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’", new Object[] {getId(), this.fileName, unencrypted().length, name});
         }

@@ -29,6 +29,9 @@ import com.cloudbees.plugins.credentials.NameWith;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import hudson.Util;
 import hudson.util.Secret;
+
+import java.util.UUID;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -47,9 +50,24 @@ public interface StringCredentials extends StandardCredentials {
 
         @Override public String getName(StringCredentials c) {
             String description = Util.fixEmptyAndTrim(c.getDescription());
-            return Messages.StringCredentials_some_text() + (description != null ? " (" + description + ")" : "");
+            String ID = c.getId();
+            return description != null ? description : (!isUUID(ID) ? ID : Messages.StringCredentials_string_credentials());
         }
 
+        /**
+         * Checks whether an ID has UUID format
+         * 
+         * @param ID the ID to check
+         * @return true if the ID has UUID format. False otherwise.
+         */
+        private static boolean isUUID(String ID) {
+            try {
+                UUID.fromString(ID);
+                return true;
+            } catch (IllegalArgumentException ex) {
+                return false;
+            }
+        }
     }
 
 }

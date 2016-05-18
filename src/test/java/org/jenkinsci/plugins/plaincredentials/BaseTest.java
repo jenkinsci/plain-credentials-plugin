@@ -42,14 +42,14 @@ public class BaseTest {
     
     @Before
     public void setup(){
-        store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();;
+        store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
     }
     
     @Test
     public void secretTextBaseTest() throws IOException {
         StringCredentialsImpl credential = new StringCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret Text", Secret.fromString("password"));
         StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), credential.getSecret()); 
-        testCreateUpdateDetele(credential, updatedCredential);
+        testCreateUpdateDelete(credential, updatedCredential);
     }
     
     @Test
@@ -58,7 +58,7 @@ public class BaseTest {
         
         FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", Base64.encode(fileItem.get()).toString());
         FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getData());
-        testCreateUpdateDetele(credential, updatedCredential);
+        testCreateUpdateDelete(credential, updatedCredential);
     }
     
     /**
@@ -68,7 +68,7 @@ public class BaseTest {
      * @param updatedCredential the credential that will replace the first one during update
      * @throws IOException
      */
-    private <T extends BaseStandardCredentials> void testCreateUpdateDetele(T credential, T updatedCredential) throws IOException {
+    private <T extends BaseStandardCredentials> void testCreateUpdateDelete(T credential, T updatedCredential) throws IOException {
         // Add a credential
         store.addCredentials(Domain.global(), credential);
         

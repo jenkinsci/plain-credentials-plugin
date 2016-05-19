@@ -3,9 +3,8 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.580.1</version>
+        <version>2.9</version>
     </parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plain-credentials</artifactId>
     <version>1.2-SNAPSHOT</version>
     <packaging>hpi</packaging>
@@ -18,12 +17,17 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </repository>
     </repositories>
+    
     <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+    <properties>
+        <jenkins.version>1.580.1</jenkins.version>
+        <java.level>6</java.level>
+    </properties>
     <licenses>
         <license>
             <name>MIT</name>
@@ -35,18 +39,12 @@
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>credentials</artifactId>
             <version>1.21</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -55,7 +53,6 @@
                 <groupId>org.jenkins-ci.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
                 <configuration>
-                    <compatibleSinceVersion>1.0-beta-4</compatibleSinceVersion>
                     <loggers>
                         <org.jenkinsci.plugins.plaincredentials>FINE</org.jenkinsci.plugins.plaincredentials>
                     </loggers>

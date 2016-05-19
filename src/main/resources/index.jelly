@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
     Allows use of plain strings and files as credentials.
 </div>

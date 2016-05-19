@@ -41,8 +41,7 @@ public class FileCredentialsTest {
     @Test(expected = IllegalArgumentException.class)
     @Issue("JENKINS-30926")
     public void shouldThrowAnExceptionIfFileNameIsBlank() throws IOException {
-        FileCredentials fileCredentials = new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "",
-                new StubFileItem(), "", "");
+        new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "", new StubFileItem(), "", "");
     }
 
     private class StubFileItem implements FileItem {

@@ -61,6 +61,10 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      * Our logger.
      */
     private static final Logger LOGGER = Logger.getLogger(FileCredentialsImpl.class.getName());
+    /**
+     * Standardize serialization (this value is for the 1.2 version of the class).
+     */
+    private static final long serialVersionUID = -7448141713963432962L;
 
     /**
      * The filename.

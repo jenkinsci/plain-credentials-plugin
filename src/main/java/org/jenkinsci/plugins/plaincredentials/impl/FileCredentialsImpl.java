@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 jglick.
+ * Copyright 2013 Jesse Glick, Stephen Connolly and CloudBees, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,47 +25,88 @@
 package org.jenkinsci.plugins.plaincredentials.impl;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.SecretBytes;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
-import hudson.util.IOException2;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.security.GeneralSecurityException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.security.CryptoConfidentialKey;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.FileItem;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+/**
+ * Default implementation of {@link FileCredentials}.
+ *
+ * @since 1.0
+ */
 public final class FileCredentialsImpl extends BaseStandardCredentials implements FileCredentials {
 
+    /**
+     * The legacy key used to encrypt the bytes held in the {@link #data} field.
+     */
+    @Deprecated
     private static final CryptoConfidentialKey KEY = new CryptoConfidentialKey(FileCredentialsImpl.class.getName());
+    /**
+     * Our logger.
+     */
     private static final Logger LOGGER = Logger.getLogger(FileCredentialsImpl.class.getName());
 
-    private final @Nonnull String fileName;
-    private final @Nonnull byte[] data;
+    /**
+     * The filename.
+     */
+    @Nonnull
+    private final String fileName;
+    /**
+     * The secret bytes.
+     *
+     * @since 1.3
+     */
+    @Nonnull
+    private final SecretBytes secretBytes;
+    /**
+     * The legacy encrypted version of the secret bytes.
+     */
+    @CheckForNull
+    @Deprecated
+    private transient byte[] data;
 
-    @DataBoundConstructor public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName, @CheckForNull String data) throws IOException {
+    /**
+     * Constructor for Stapler form binding.
+     *
+     * @param scope       the scope of the credentials.
+     * @param id          the id of the credentials.
+     * @param description the description of the credentials.
+     * @param file        the uploaded file.
+     * @param fileName    the name of the file.
+     * @param secretBytes the content of the file.
+     * @throws IOException when things go wrong.
+     * @deprecated use {@link #FileCredentialsImpl(CredentialsScope, String, String, FileItem, String, SecretBytes)} for
+     * stapler or {@link #FileCredentialsImpl(CredentialsScope, String, String, String, SecretBytes)} for programatic
+     * instantiation.
+     */
+    @Deprecated
+    public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
+                               @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName,
+                               @CheckForNull String secretBytes) throws IOException {
         super(scope, id, description);
         String name = file.getName();
         if (name.length() > 0) {
             this.fileName = name.replaceFirst("^.+[/\\\\]", "");
-            byte[] unencrypted = file.get();
-            try {
-                this.data = KEY.encrypt().doFinal(unencrypted);
-            } catch (GeneralSecurityException x) {
-                throw new IOException2(x);
-            }
+            this.secretBytes = SecretBytes.fromBytes(file.get());
         } else {
             this.fileName = fileName;
-            this.data = Base64.decodeBase64(data);
+            this.secretBytes = SecretBytes.fromString(secretBytes);
         }
         if (this.fileName == null || this.fileName.isEmpty()) {
             throw new IllegalArgumentException(
@@ -74,34 +115,124 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
             );
         }
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’", new Object[] {getId(), this.fileName, unencrypted().length, name});
+            LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’",
+                    new Object[]{getId(), this.fileName, this.secretBytes.getPlainData().length, name});
         }
     }
 
-    @Override public String getFileName() {
+    /**
+     * Constructor for Stapler form binding.
+     *
+     * @param scope       the scope of the credentials.
+     * @param id          the id of the credentials.
+     * @param description the description of the credentials.
+     * @param file        the uploaded file.
+     * @param fileName    the name of the file.
+     * @param secretBytes the content of the file.
+     * @throws IOException when things go wrong.
+     */
+    @DataBoundConstructor
+    public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
+                               @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName,
+                               @CheckForNull SecretBytes secretBytes) throws IOException {
+        super(scope, id, description);
+        String name = file.getName();
+        if (name.length() > 0) {
+            this.fileName = name.replaceFirst("^.+[/\\\\]", "");
+            this.secretBytes = SecretBytes.fromBytes(file.get());
+        } else {
+            this.fileName = fileName;
+            this.secretBytes = secretBytes;
+        }
+        if (this.fileName == null || this.fileName.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("No FileName was provided or resolved. " +
+                            "Input file item was %s and input file name was %s.", file.toString(), fileName)
+            );
+        }
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’",
+                    new Object[]{getId(), this.fileName, secretBytes.getPlainData().length, name});
+        }
+    }
+
+    /**
+     * Constructor for everyone besides Stapler.
+     *
+     * @param scope       the scope of the credentials.
+     * @param id          the id of the credentials.
+     * @param description the description of the credentials.
+     * @param fileName    the name of the file.
+     * @param secretBytes the content of the file.
+     * @since 1.3
+     */
+    public FileCredentialsImpl(@CheckForNull CredentialsScope scope,
+                               @CheckForNull String id,
+                               @CheckForNull String description, @Nonnull String fileName,
+                               @Nonnull SecretBytes secretBytes) {
+        super(scope, id, description);
+        this.fileName = fileName;
+        this.secretBytes = secretBytes;
+    }
+
+    /**
+     * Migrate {@link #data} to {@link #secretBytes}
+     *
+     * @return the object.
+     * @throws ObjectStreamException if the data cannot be migrated.
+     */
+    private Object readResolve() throws ObjectStreamException {
+        if (data != null) {
+            // migrate legacy data
+            try {
+                return new FileCredentialsImpl(getScope(), getId(), getDescription(), fileName,
+                        SecretBytes.fromBytes(KEY.decrypt().doFinal(data)));
+            } catch (GeneralSecurityException e1) {
+                InvalidObjectException e2 = new InvalidObjectException(e1.toString());
+                e2.initCause(e1);
+                throw e2;
+            }
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getFileName() {
         return fileName;
     }
 
-    @Restricted(DoNotUse.class) // for Jelly only
-    public String getData() {
-        return Base64.encodeBase64String(data);
+    /**
+     * Exposes the encrypted content to jelly.
+     *
+     * @return the encrypted content.
+     */
+    @Restricted(DoNotUse.class) // for Jelly only // TODO consider adding to API
+    public SecretBytes getSecretBytes() {
+        return secretBytes;
     }
 
-    private byte[] unencrypted() throws IOException {
-        try {
-            return KEY.decrypt().doFinal(data);
-        } catch (GeneralSecurityException x) {
-            throw new IOException2(x);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public InputStream getContent() throws IOException {
+        return new ByteArrayInputStream(secretBytes.getPlainData());
     }
 
-    @Override public InputStream getContent() throws IOException {
-        return new ByteArrayInputStream(unencrypted());
-    }
+    /**
+     * Our descriptor.
+     */
+    @Extension
+    public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
 
-    @Extension public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
-
-        @Override public String getDisplayName() {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String getDisplayName() {
             return Messages.FileCredentialsImpl_secret_file();
         }
 

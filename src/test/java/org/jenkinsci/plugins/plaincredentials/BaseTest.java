@@ -57,7 +57,7 @@ public class BaseTest {
         DiskFileItem fileItem = createEmptyFileItem();
         
         FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", Base64.encode(fileItem.get()).toString());
-        FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getData());
+        FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
         testCreateUpdateDelete(credential, updatedCredential);
     }
     

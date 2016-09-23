@@ -93,7 +93,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      * @param description the description of the credentials.
      * @param file        the uploaded file.
      * @param fileName    the name of the file.
-     * @param secretBytes the content of the file.
+     * @param data        the content of the file.
      * @throws IOException when things go wrong.
      * @deprecated use {@link #FileCredentialsImpl(CredentialsScope, String, String, FileItem, String, SecretBytes)} for
      * stapler or {@link #FileCredentialsImpl(CredentialsScope, String, String, String, SecretBytes)} for programatic
@@ -102,7 +102,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
     @Deprecated
     public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
                                @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName,
-                               @CheckForNull String secretBytes) throws IOException {
+                               @CheckForNull String data) throws IOException {
         super(scope, id, description);
         String name = file.getName();
         if (name.length() > 0) {
@@ -110,7 +110,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
             this.secretBytes = SecretBytes.fromBytes(file.get());
         } else {
             this.fileName = fileName;
-            this.secretBytes = SecretBytes.fromString(secretBytes);
+            this.secretBytes = SecretBytes.fromString(data);
         }
         if (this.fileName == null || this.fileName.isEmpty()) {
             throw new IllegalArgumentException(
@@ -145,6 +145,9 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
             this.fileName = name.replaceFirst("^.+[/\\\\]", "");
             this.secretBytes = SecretBytes.fromBytes(file.get());
         } else {
+            if (secretBytes == null) {
+                throw new IllegalArgumentException("No content provided or resolved.");
+            }
             this.fileName = fileName;
             this.secretBytes = secretBytes;
         }

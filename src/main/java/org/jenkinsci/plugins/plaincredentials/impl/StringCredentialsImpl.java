@@ -35,6 +35,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 public final class StringCredentialsImpl extends BaseStandardCredentials implements StringCredentials {
 
+    private static final long serialVersionUID = 4239232115673493707L;
+
     private final @Nonnull Secret secret;
 
     @DataBoundConstructor public StringCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull Secret secret) {

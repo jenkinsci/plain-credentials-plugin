@@ -27,6 +27,7 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
+import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
@@ -35,8 +36,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import org.jvnet.hudson.test.JenkinsRule;
 
 public class FileCredentialsTest {
+
+    @Rule
+    public JenkinsRule r = new JenkinsRule();
 
     @Test(expected = IllegalArgumentException.class)
     @Issue("JENKINS-30926")

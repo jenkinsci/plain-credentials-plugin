@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Jesse Glick, Stephen Connolly and CloudBees, Inc.
+ * Copyright 2013-2016 Jesse Glick, Stephen Connolly and CloudBees, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

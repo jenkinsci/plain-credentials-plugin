@@ -97,8 +97,8 @@ public class SecretBytesTest {
     }
 
     /**
-     * Verifies that {@link SecretBytes} will treat a Base64 encoded plain text content as the content to be encrypted
-     * with the instance's secret key which gets applied when the {@link FileCredentialsImpl} is written to disk.
+     * Verifies that legacy data is converted correctly and that the new {@link SecretBytes} gets applied 
+     * when the {@link FileCredentialsImpl} is written to disk.
      * @throws Exception if things go wrong.
      */
     @Test

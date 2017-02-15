@@ -159,7 +159,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
         }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’",
-                    new Object[]{getId(), this.fileName, secretBytes.getPlainData().length, name});
+                    new Object[]{getId(), this.fileName, this.secretBytes.getPlainData().length, name});
         }
     }
 

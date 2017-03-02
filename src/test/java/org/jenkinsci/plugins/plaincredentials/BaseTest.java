@@ -23,9 +23,12 @@ import org.jvnet.hudson.test.JenkinsRule;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.CredentialsStore;
+import com.cloudbees.plugins.credentials.SecretBytes;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.domains.DomainSpecification;
+import com.cloudbees.plugins.credentials.domains.HostnamePortRequirement;
+import com.cloudbees.plugins.credentials.domains.HostnamePortSpecification;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 
 import hudson.security.ACL;

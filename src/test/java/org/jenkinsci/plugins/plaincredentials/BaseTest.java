@@ -42,6 +42,13 @@ public class BaseTest {
     private static final String UPDATED_CRED_ID = "Custom-ID-Updated";
     private static final String CRED_ID = "Custom-ID";
 
+    private static final String INCLUDE_HOST = "include.com";
+    private static final String EXCLUDE_HOST = "exclude.com";
+    private static final int INCLUDE_PORT = 80;
+    private static final int EXCLUDE_PORT = 90;
+    private static final String INCLUDE_COMPLETE_HOST = INCLUDE_HOST + ":" + INCLUDE_PORT;
+    private static final String EXCLUDE_COMPLETE_HOST = EXCLUDE_HOST + ":" + EXCLUDE_PORT;
+
     @Rule
     public JenkinsRule r = new JenkinsRule();
     
@@ -71,7 +78,7 @@ public class BaseTest {
         StringCredentialsImpl credential = new StringCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret Text", Secret.fromString("password"));
         StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), credential.getSecret());
 
-        DomainSpecification[] ar = { new HostnamePortSpecification("include.com:80", "exclude.com:90")};
+        DomainSpecification[] ar = { new HostnamePortSpecification(INCLUDE_COMPLETE_HOST, EXCLUDE_COMPLETE_HOST)};
         Domain d = new Domain("mydomain", "", Arrays.asList(ar));
 
         testCreateUpdateDelete(credential, updatedCredential, d);
@@ -111,7 +118,7 @@ public class BaseTest {
         FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));
         FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
 
-        DomainSpecification[] ar = { new HostnamePortSpecification("include.com:80", "exclude.com:90")};
+        DomainSpecification[] ar = { new HostnamePortSpecification(INCLUDE_COMPLETE_HOST, EXCLUDE_COMPLETE_HOST)};
         Domain d = new Domain("mydomain", "", Arrays.asList(ar));
 
         testCreateUpdateDelete(credential, updatedCredential, d);
@@ -153,13 +160,18 @@ public class BaseTest {
 
             // Look up all credentials
             if (!globalDomain) {
-                DomainRequirement[] wrongIncludeDomainRequirements = {new HostnamePortRequirement("inclssude.com", 80)};
+                DomainRequirement[] wrongIncludeDomainRequirements = {new HostnamePortRequirement("inclssude.com", INCLUDE_PORT)};
                 List<BaseStandardCredentials> credentialsWithWrongInclude = CredentialsProvider.lookupCredentials(BaseStandardCredentials.class, r.jenkins, auth, wrongIncludeDomainRequirements);
                 assertThat(credentialsWithWrongInclude.size(), is(0));
 
-                DomainRequirement[] excludeDomainRequirements = {new HostnamePortRequirement("exclude.com", 90)};
+                DomainRequirement[] excludeDomainRequirements = {new HostnamePortRequirement(EXCLUDE_HOST, EXCLUDE_PORT)};
                 List<BaseStandardCredentials> credentialsWithExclude = CredentialsProvider.lookupCredentials(BaseStandardCredentials.class, r.jenkins, auth, excludeDomainRequirements);
                 assertThat(credentialsWithExclude.size(), is(0));
+
+                DomainRequirement[] validDomainRequirements = {new HostnamePortRequirement(INCLUDE_HOST, INCLUDE_PORT)};
+                List<BaseStandardCredentials> credentialsWithInclude = CredentialsProvider.lookupCredentials(BaseStandardCredentials.class, r.jenkins, auth, validDomainRequirements);
+                assertThat(credentialsWithInclude.size(), is(1));
+                assertThat(credentialsWithInclude.get(0).getId(), is(CRED_ID));
             }
 
             List<BaseStandardCredentials> credentials = CredentialsProvider.lookupCredentials(BaseStandardCredentials.class, r.jenkins, auth, Collections.<DomainRequirement>emptyList());

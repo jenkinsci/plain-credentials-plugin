@@ -103,7 +103,7 @@ public class BaseTest {
     }
 
     @Test
-    public void secretFilPersonalScopeTest() throws IOException, URISyntaxException {
+    public void secretFilePersonalScopeTest() throws IOException, URISyntaxException {
         DiskFileItem fileItem = createEmptyFileItem();
 
         FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.USER, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));

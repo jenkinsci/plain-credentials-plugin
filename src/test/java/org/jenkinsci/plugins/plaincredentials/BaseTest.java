@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
+import com.cloudbees.plugins.credentials.SecretBytes;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
@@ -22,7 +23,6 @@ import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
-import com.trilead.ssh2.crypto.Base64;
 
 import hudson.security.ACL;
 import hudson.util.Secret;
@@ -56,7 +56,7 @@ public class BaseTest {
     public void secretFileBaseTest() throws IOException, URISyntaxException {
         DiskFileItem fileItem = createEmptyFileItem();
         
-        FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", Base64.encode(fileItem.get()).toString());
+        FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));
         FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
         testCreateUpdateDelete(credential, updatedCredential);
     }

@@ -23,6 +23,7 @@ import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
+import com.trilead.ssh2.crypto.Base64;
 
 import hudson.security.ACL;
 import hudson.util.Secret;
@@ -54,9 +55,25 @@ public class BaseTest {
     
     @Test
     public void secretFileBaseTest() throws IOException, URISyntaxException {
+        secretFileTest(false);
+    }
+
+    @Test
+    public void secretFileBaseTestWithDeprecatedCtor() throws IOException, URISyntaxException {
+        secretFileTest(true);
+    }
+
+    private void secretFileTest(boolean useDeprecatedConstructor) throws IOException, URISyntaxException {
         DiskFileItem fileItem = createEmptyFileItem();
-        
-        FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));
+
+        FileCredentialsImpl credential;
+
+        if (useDeprecatedConstructor) {
+            credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", Base64.encode(fileItem.get()).toString());
+        } else {
+            credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));
+        }
+
         FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
         testCreateUpdateDelete(credential, updatedCredential);
     }

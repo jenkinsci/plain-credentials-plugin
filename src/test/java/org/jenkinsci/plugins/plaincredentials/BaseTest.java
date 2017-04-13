@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
+import com.cloudbees.plugins.credentials.SecretBytes;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
@@ -54,9 +55,25 @@ public class BaseTest {
     
     @Test
     public void secretFileBaseTest() throws IOException, URISyntaxException {
+        secretFileTest(false);
+    }
+
+    @Test
+    public void secretFileBaseTestWithDeprecatedCtor() throws IOException, URISyntaxException {
+        secretFileTest(true);
+    }
+
+    private void secretFileTest(boolean useDeprecatedConstructor) throws IOException, URISyntaxException {
         DiskFileItem fileItem = createEmptyFileItem();
-        
-        FileCredentialsImpl credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", Base64.encode(fileItem.get()).toString());
+
+        FileCredentialsImpl credential;
+
+        if (useDeprecatedConstructor) {
+            credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", Base64.encode(fileItem.get()).toString());
+        } else {
+            credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));
+        }
+
         FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
         testCreateUpdateDelete(credential, updatedCredential);
     }

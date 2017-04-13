@@ -24,6 +24,7 @@
 package org.jenkinsci.plugins.plaincredentials;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.SecretBytes;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
@@ -46,7 +47,7 @@ public class FileCredentialsTest {
     @Test(expected = IllegalArgumentException.class)
     @Issue("JENKINS-30926")
     public void shouldThrowAnExceptionIfFileNameIsBlank() throws IOException {
-        new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "", new StubFileItem(), "", "");
+        new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "", new StubFileItem(), "", SecretBytes.fromString(""));
     }
 
     private class StubFileItem implements FileItem {

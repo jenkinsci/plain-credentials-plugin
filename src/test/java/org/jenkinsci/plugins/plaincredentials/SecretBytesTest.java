@@ -25,6 +25,7 @@
 package org.jenkinsci.plugins.plaincredentials;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
+import com.cloudbees.plugins.credentials.CredentialsNameProvider;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.SecretBytes;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
@@ -112,6 +113,7 @@ public class SecretBytesTest {
                 allOf(containsString("</data>"), not(containsString("</secretBytes>"))));
 
         assertThat(ExtensionList.lookup(OldDataMonitor.class).get(0).getData().entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().extra).collect(Collectors.toList()), empty());
+        assertThat(SystemCredentialsProvider.getInstance().getCredentials().stream().map(CredentialsNameProvider::name).collect(Collectors.toList()), contains("secret.txt (credential using legacy data format)"));
 
         // get the credential instance under test
         FileCredentials c = CredentialsMatchers.firstOrNull(

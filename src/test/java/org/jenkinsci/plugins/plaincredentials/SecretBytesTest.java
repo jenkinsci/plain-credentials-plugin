@@ -25,6 +25,7 @@
 package org.jenkinsci.plugins.plaincredentials;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
+import com.cloudbees.plugins.credentials.CredentialsNameProvider;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.SecretBytes;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
@@ -46,6 +47,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
 import static hudson.cli.CLICommandInvoker.Matcher.succeededSilently;
+import java.util.stream.Collectors;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -107,6 +109,8 @@ public class SecretBytesTest {
         // first check that the file on disk contains the legacy format
         assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
                 allOf(containsString("</data>"), not(containsString("</secretBytes>"))));
+
+        System.out.println("Loaded: " + SystemCredentialsProvider.getInstance().getCredentials().stream().map(CredentialsNameProvider::name).collect(Collectors.toList()));
 
         // get the credential instance under test
         FileCredentials c = CredentialsMatchers.firstOrNull(

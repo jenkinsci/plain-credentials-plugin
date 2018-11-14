@@ -112,6 +112,7 @@ public class SecretBytesTest {
         assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
                 allOf(containsString("</data>"), not(containsString("</secretBytes>"))));
 
+        assertThat(SystemCredentialsProvider.getConfigFile().asString(), containsString("<id>legacyData</id>"));
         assertThat(ExtensionList.lookup(OldDataMonitor.class).get(0).getData().entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().extra).collect(Collectors.toList()), empty());
         assertThat(SystemCredentialsProvider.getInstance().getCredentials().stream().map(CredentialsNameProvider::name).collect(Collectors.toList()), contains("secret.txt (credential using legacy data format)"));
 

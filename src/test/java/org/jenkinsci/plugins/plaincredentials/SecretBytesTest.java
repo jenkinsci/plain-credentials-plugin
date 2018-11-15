@@ -46,14 +46,20 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
 import static hudson.cli.CLICommandInvoker.Matcher.succeededSilently;
+import hudson.util.RobustReflectionConverter;
+import java.util.logging.Level;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import org.jvnet.hudson.test.LoggerRule;
 
 public class SecretBytesTest {
 
     @Rule
     public JenkinsRule r = new JenkinsRule();
+
+    @Rule
+    public LoggerRule logging = new LoggerRule().record(RobustReflectionConverter.class, Level.FINE);
 
     /**
      * Verifies that {@link SecretBytes} will treat a Base64 encoded plain text content as the content to be encrypted

@@ -28,7 +28,8 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>2.15</version>
+    <version>3.28</version>
+    <relativePath />
   </parent>
 
   <artifactId>plain-credentials</artifactId>
@@ -37,11 +38,11 @@
 
   <name>Plain Credentials Plugin</name>
   <description>Allows use of plain strings and files as credentials.</description>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/Plain+Credentials+Plugin</url>
+  <url>https://wiki.jenkins.io/display/JENKINS/Plain+Credentials+Plugin</url>
   <licenses>
     <license>
       <name>MIT</name>
-      <url>http://opensource.org/licenses/MIT</url>
+      <url>https://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
 
@@ -53,20 +54,20 @@
   </scm>
 
   <properties>
-    <jenkins.version>1.609</jenkins.version>
-    <java.level>6</java.level>
+    <jenkins.version>2.60.3</jenkins.version>
+    <java.level>8</java.level>
   </properties>
 
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
+      <url>https://repo.jenkins-ci.org/public/</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
       <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
+      <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
 

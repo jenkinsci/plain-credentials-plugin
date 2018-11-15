@@ -116,6 +116,7 @@ public class SecretBytesTest {
 
         assertThat(SystemCredentialsProvider.getConfigFile().asString(), containsString("<id>legacyData</id>"));
         assertThat(ExtensionList.lookup(OldDataMonitor.class).get(0).getData().entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().extra).collect(Collectors.toList()), empty());
+        assertEquals(272, new File(r.jenkins.getRootDir(), "secrets/org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl").length());
         new FileCredentialsImpl(CredentialsScope.GLOBAL, "legacyData", "credential using legacy data format", "secret.txt",
                 SecretBytes.fromBytes(FileCredentialsImpl.KEY.decrypt().doFinal(Base64.decodeBase64("DMG4Q+h/SWXBvMJQy7vMACNZgmCVggCvjP5qeNqsAQo8o7dC69vHlHOjReE1MDIr"))));
         assertThat(((SystemCredentialsProvider) SystemCredentialsProvider.getConfigFile().read()).getDomainCredentialsMap().toString(),

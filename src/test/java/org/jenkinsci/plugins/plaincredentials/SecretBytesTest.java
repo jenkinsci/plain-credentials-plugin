@@ -27,6 +27,7 @@ package org.jenkinsci.plugins.plaincredentials;
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsNameProvider;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SecretBytes;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.cli.CreateCredentialsByXmlCommand;
@@ -107,6 +108,7 @@ public class SecretBytesTest {
      */
     @Test
     @LocalData
+    @SuppressWarnings( {"ResultOfObjectAllocationIgnored", "deprecation"})
     public void migrateLegacyData() throws Exception {
         // first check that the file on disk contains the legacy format
         assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
@@ -114,6 +116,10 @@ public class SecretBytesTest {
 
         assertThat(SystemCredentialsProvider.getConfigFile().asString(), containsString("<id>legacyData</id>"));
         assertThat(ExtensionList.lookup(OldDataMonitor.class).get(0).getData().entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().extra).collect(Collectors.toList()), empty());
+        new FileCredentialsImpl(CredentialsScope.GLOBAL, "legacyData", "credential using legacy data format", "secret.txt",
+                SecretBytes.fromBytes(FileCredentialsImpl.KEY.decrypt().doFinal(Base64.decodeBase64("DMG4Q+h/SWXBvMJQy7vMACNZgmCVggCvjP5qeNqsAQo8o7dC69vHlHOjReE1MDIr"))));
+        assertThat(((SystemCredentialsProvider) SystemCredentialsProvider.getConfigFile().read()).getDomainCredentialsMap().toString(),
+                containsString("{com.cloudbees.plugins.credentials.domains.Domain@0=[org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl@"));
         assertThat(SystemCredentialsProvider.getInstance().getDomainCredentialsMap().toString(), containsString("{com.cloudbees.plugins.credentials.domains.Domain@0=[org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl@"));
         assertThat(SystemCredentialsProvider.getInstance().getCredentials().stream().map(CredentialsNameProvider::name).collect(Collectors.toList()), contains("secret.txt (credential using legacy data format)"));
 

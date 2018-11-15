@@ -43,6 +43,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.DoNotUse;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -56,7 +57,8 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      * The legacy key used to encrypt the bytes held in the {@link #data} field.
      */
     @Deprecated
-    private static final CryptoConfidentialKey KEY = new CryptoConfidentialKey(FileCredentialsImpl.class.getName());
+    @Restricted(NoExternalUse.class)
+    public static final CryptoConfidentialKey KEY = new CryptoConfidentialKey(FileCredentialsImpl.class.getName());
     /**
      * Our logger.
      */

@@ -25,14 +25,11 @@
 package org.jenkinsci.plugins.plaincredentials;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
-import com.cloudbees.plugins.credentials.CredentialsNameProvider;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SecretBytes;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.cli.CreateCredentialsByXmlCommand;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import hudson.ExtensionList;
 import hudson.cli.CLICommandInvoker;
 import hudson.security.ACL;
 import java.io.ByteArrayInputStream;
@@ -49,16 +46,20 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
 import static hudson.cli.CLICommandInvoker.Matcher.succeededSilently;
-import hudson.diagnosis.OldDataMonitor;
-import java.util.stream.Collectors;
+import hudson.util.RobustReflectionConverter;
+import java.util.logging.Level;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import org.jvnet.hudson.test.LoggerRule;
 
 public class SecretBytesTest {
 
     @Rule
     public JenkinsRule r = new JenkinsRule();
+
+    @Rule
+    public LoggerRule logging = new LoggerRule().record(RobustReflectionConverter.class, Level.FINE);
 
     /**
      * Verifies that {@link SecretBytes} will treat a Base64 encoded plain text content as the content to be encrypted
@@ -108,21 +109,10 @@ public class SecretBytesTest {
      */
     @Test
     @LocalData
-    @SuppressWarnings( {"ResultOfObjectAllocationIgnored", "deprecation"})
     public void migrateLegacyData() throws Exception {
         // first check that the file on disk contains the legacy format
         assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
                 allOf(containsString("</data>"), not(containsString("</secretBytes>"))));
-
-        assertThat(SystemCredentialsProvider.getConfigFile().asString(), containsString("<id>legacyData</id>"));
-        assertThat(ExtensionList.lookup(OldDataMonitor.class).get(0).getData().entrySet().stream().map(e -> e.getKey() + ": " + e.getValue().extra).collect(Collectors.toList()), empty());
-        assertEquals(272, new File(r.jenkins.getRootDir(), "secrets/org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl").length());
-        new FileCredentialsImpl(CredentialsScope.GLOBAL, "legacyData", "credential using legacy data format", "secret.txt",
-                SecretBytes.fromBytes(FileCredentialsImpl.KEY.decrypt().doFinal(Base64.decodeBase64("DMG4Q+h/SWXBvMJQy7vMACNZgmCVggCvjP5qeNqsAQo8o7dC69vHlHOjReE1MDIr"))));
-        assertThat(((SystemCredentialsProvider) SystemCredentialsProvider.getConfigFile().read()).getDomainCredentialsMap().toString(),
-                containsString("{com.cloudbees.plugins.credentials.domains.Domain@0=[org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl@"));
-        assertThat(SystemCredentialsProvider.getInstance().getDomainCredentialsMap().toString(), containsString("{com.cloudbees.plugins.credentials.domains.Domain@0=[org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl@"));
-        assertThat(SystemCredentialsProvider.getInstance().getCredentials().stream().map(CredentialsNameProvider::name).collect(Collectors.toList()), contains("secret.txt (credential using legacy data format)"));
 
         // get the credential instance under test
         FileCredentials c = CredentialsMatchers.firstOrNull(

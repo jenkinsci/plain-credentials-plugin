@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectStreamException;
 import java.security.GeneralSecurityException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
@@ -78,6 +79,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      */
     @Nonnull
     private final SecretBytes secretBytes;
+
     /**
      * The legacy encrypted version of the secret bytes.
      */
@@ -101,17 +103,13 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      */
     @Deprecated
     public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
-                               @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName,
+                               @CheckForNull String description, @CheckForNull FileItem file, @CheckForNull String fileName,
                                @CheckForNull String data) throws IOException {
         super(scope, id, description);
-        String name = file.getName();
-        if (name.length() > 0) {
-            this.fileName = name.replaceFirst("^.+[/\\\\]", "");
-            this.secretBytes = SecretBytes.fromBytes(file.get());
-        } else {
-            this.fileName = fileName;
-            this.secretBytes = SecretBytes.fromString(data);
-        }
+
+        this.fileName = resolveFileName(file, fileName);
+        this.secretBytes = resolveSecretBytes(file, data);
+
         if (this.fileName == null || this.fileName.isEmpty()) {
             throw new IllegalArgumentException(
                     String.format("No FileName was provided or resolved. " +
@@ -120,7 +118,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
         }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’",
-                    new Object[]{getId(), this.fileName, this.secretBytes.getPlainData().length, name});
+                    new Object[]{getId(), this.fileName, this.secretBytes.getPlainData().length, file.getName()});
         }
     }
 
@@ -137,20 +135,13 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      */
     @DataBoundConstructor
     public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
-                               @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName,
+                               @CheckForNull String description, @CheckForNull FileItem file, @CheckForNull String fileName,
                                @CheckForNull SecretBytes secretBytes) throws IOException {
         super(scope, id, description);
-        String name = file.getName();
-        if (name.length() > 0) {
-            this.fileName = name.replaceFirst("^.+[/\\\\]", "");
-            this.secretBytes = SecretBytes.fromBytes(file.get());
-        } else {
-            if (secretBytes == null) {
-                throw new IllegalArgumentException("No content provided or resolved.");
-            }
-            this.fileName = fileName;
-            this.secretBytes = secretBytes;
-        }
+
+        this.fileName = resolveFileName(file, fileName);
+        this.secretBytes = resolveSecretBytes(file, secretBytes);
+
         if (this.fileName == null || this.fileName.isEmpty()) {
             throw new IllegalArgumentException(
                     String.format("No FileName was provided or resolved. " +
@@ -159,7 +150,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
         }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "for {0} have {1} of length {2} after upload of ‘{3}’",
-                    new Object[]{getId(), this.fileName, this.secretBytes.getPlainData().length, name});
+                    new Object[]{getId(), this.fileName, this.secretBytes.getPlainData().length, file.getName()});
         }
     }
 
@@ -227,6 +218,29 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
     @Override
     public InputStream getContent() throws IOException {
         return new ByteArrayInputStream(secretBytes.getPlainData());
+    }
+
+    private Optional<FileItem> resolveFile(FileItem file) {
+        return Optional.ofNullable(file).filter(f -> f.getName().length() > 0);
+    }
+
+    private SecretBytes resolveSecretBytes(FileItem file, SecretBytes secretBytes) {
+        SecretBytes bytes = Optional.ofNullable(secretBytes).orElseThrow(() -> new IllegalArgumentException("No content provided or resolved."));
+        return resolveFile(file)
+                .map(f -> SecretBytes.fromBytes(f.get()))
+                .orElse(bytes);
+    }
+
+    private SecretBytes resolveSecretBytes(FileItem file, String data) {
+        return resolveFile(file)
+                .map(f -> SecretBytes.fromBytes(f.get()))
+                .orElse(SecretBytes.fromString(data));
+    }
+
+    private String resolveFileName(FileItem file, String fileName) {
+        return resolveFile(file)
+                .map(f -> f.getName().replaceFirst("^.+[/\\\\]", ""))
+                .orElse(fileName);
     }
 
     /**

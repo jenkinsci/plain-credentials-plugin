@@ -137,10 +137,10 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      */
     @DataBoundConstructor
     public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
-                               @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName,
+                               @CheckForNull String description, @CheckForNull FileItem file, @CheckForNull String fileName,
                                @CheckForNull SecretBytes secretBytes) throws IOException {
         super(scope, id, description);
-        String name = file.getName();
+        String name = file != null ? file.getName() : "";
         if (name.length() > 0) {
             this.fileName = name.replaceFirst("^.+[/\\\\]", "");
             this.secretBytes = SecretBytes.fromBytes(file.get());

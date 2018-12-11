@@ -78,7 +78,6 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      */
     @Nonnull
     private final SecretBytes secretBytes;
-
     /**
      * The legacy encrypted version of the secret bytes.
      */

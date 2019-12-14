@@ -38,7 +38,7 @@
 
   <name>Plain Credentials Plugin</name>
   <description>Allows use of plain strings and files as credentials.</description>
-  <url>https://wiki.jenkins.io/display/JENKINS/Plain+Credentials+Plugin</url>
+  <url>https://github.com/jenkinsci/plain-credentials-plugin</url>
   <licenses>
     <license>
       <name>MIT</name>

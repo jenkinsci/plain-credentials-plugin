@@ -26,7 +26,7 @@ See the
 for an example use case.
 
 However, as described in the [Credentials
-Plugin](https://wiki.jenkins.io/display/JENKINS/Credentials+Plugin)
+Plugin](https://plugins.jenkins.io/credentials)
 wiki, they could potentially be used by any other plugin that requires
 them.
 

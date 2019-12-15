@@ -38,7 +38,7 @@
 
 -   Added random UUID into bound file paths.
 -   Factored build wrapper into [Credentials Binding
-    Plugin](https:///plugins.jenkins.io/credentials-binding),
+    Plugin](https://plugins.jenkins.io/credentials-binding),
     which you must install for that functionality to continue to work.
 
 ### Version 1.0 beta 3 (Sep 22, 2013)

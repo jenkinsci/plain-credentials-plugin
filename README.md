@@ -2,6 +2,34 @@
 
  Allows use of plain strings and files as credentials to be passed to miscellaneous build steps. See also this [plugin's wiki page][wiki]
 
+## Description
+
+This plugin provides two new types of credentials:
+
+-   `FileCredentials` or *Secret file*:
+
+![](https://wiki.jenkins.io/download/attachments/69763266/secretFile.png?version=1&modificationDate=1463752202000&api=v2){.confluence-embedded-image
+.confluence-content-image-border width="680"}
+
+-   `StringCredentials` or *Secret text*:
+
+![](https://wiki.jenkins.io/download/attachments/69763266/secretText.png?version=1&modificationDate=1463752223000&api=v2){.confluence-embedded-image
+.confluence-content-image-border width="680"}
+
+## Usage
+
+These credentials were originally designed to be used together with the
+[Credentials Binding
+Plugin](https://plugins.jenkins.io/credentials-binding).
+See the
+[wiki](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin){.external-link}
+for an example use case.
+
+However, as described in the [Credentials
+Plugin](https://wiki.jenkins.io/display/JENKINS/Credentials+Plugin)
+wiki, they could potentially be used by any other plugin that requires
+them.
+
 # Environment
 
 The following build environment is required to build this plugin
@@ -26,4 +54,4 @@ To test in a local Jenkins instance
 
     mvn hpi:run
 
-  [wiki]: https://wiki.jenkins-ci.org/display/JENKINS/Plain+Credentials+Plugin
+  [wiki]: https://plugins.jenkins.io/plain-credentials

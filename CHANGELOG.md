@@ -3,7 +3,7 @@
 ### Version 1.5 (2018-12-11)
 
 -   Compatibility with [Configuration as Code
-    Plugin](https://wiki.jenkins.io/display/JENKINS/Configuration+as+Code+Plugin)
+    Plugin](https://plugins.jenkins.io/configuration-as-code)
     for file credentials.
 
 ### Version 1.4 (Feb 15, 2017)
@@ -38,7 +38,7 @@
 
 -   Added random UUID into bound file paths.
 -   Factored build wrapper into [Credentials Binding
-    Plugin](https://wiki.jenkins.io/display/JENKINS/Credentials+Binding+Plugin),
+    Plugin](https:///plugins.jenkins.io/credentials-binding),
     which you must install for that functionality to continue to work.
 
 ### Version 1.0 beta 3 (Sep 22, 2013)

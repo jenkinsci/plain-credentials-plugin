@@ -8,13 +8,15 @@ This plugin provides two new types of credentials:
 
 -   `FileCredentials` or *Secret file*:
 
-![](https://wiki.jenkins.io/download/attachments/69763266/secretFile.png?version=1&modificationDate=1463752202000&api=v2){.confluence-embedded-image
-.confluence-content-image-border width="680"}
+<p align="center">
+  <img src="docs/images/secretFile.png" alt="SecretFile screenshot 1" width="738">
+</p>
 
 -   `StringCredentials` or *Secret text*:
 
-![](https://wiki.jenkins.io/download/attachments/69763266/secretText.png?version=1&modificationDate=1463752223000&api=v2){.confluence-embedded-image
-.confluence-content-image-border width="680"}
+<p align="center">
+  <img src="docs/images/secretText.png" alt="SecretText screenshot 1" width="738">
+</p>
 
 ## Usage
 
@@ -22,7 +24,7 @@ These credentials were originally designed to be used together with the
 [Credentials Binding
 Plugin](https://plugins.jenkins.io/credentials-binding).
 See the
-[wiki](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin){.external-link}
+[plugin](https://plugins.jenkins.io/credentials-binding){.external-link}
 for an example use case.
 
 However, as described in the [Credentials
@@ -54,4 +56,3 @@ To test in a local Jenkins instance
 
     mvn hpi:run
 
-  [wiki]: https://plugins.jenkins.io/plain-credentials

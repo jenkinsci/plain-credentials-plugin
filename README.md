@@ -8,15 +8,11 @@ This plugin provides two new types of credentials:
 
 -   `FileCredentials` or *Secret file*:
 
-<p align="center">
-  <img src="docs/images/secretFile.png" alt="SecretFile screenshot 1" width="738">
-</p>
+![SecretFile screenshot 1](/docs/images/secretFile.png "SecretFile screenshot 1")
 
 -   `StringCredentials` or *Secret text*:
 
-<p align="center">
-  <img src="docs/images/secretText.png" alt="SecretText screenshot 1" width="738">
-</p>
+![SecretText screenshot 1](/docs/images/secretText.png "SecretText screenshot 1")
 
 ## Usage
 

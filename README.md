@@ -1,6 +1,6 @@
 # Jenkins Plain Credentials Plugin
 
- Allows use of plain strings and files as credentials to be passed to miscellaneous build steps. See also this [plugin's wiki page][wiki]
+ Allows use of plain strings and files as credentials to be passed to miscellaneous build steps.
 
 ## Description
 

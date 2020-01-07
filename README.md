@@ -20,7 +20,6 @@ These credentials were originally designed to be used together with the
 [Credentials Binding
 Plugin](https://plugins.jenkins.io/credentials-binding).
 See the
-[plugin](https://plugins.jenkins.io/credentials-binding){.external-link}
 for an example use case.
 
 However, as described in the [Credentials
@@ -51,4 +50,3 @@ To release the plugin:
 To test in a local Jenkins instance
 
     mvn hpi:run
-

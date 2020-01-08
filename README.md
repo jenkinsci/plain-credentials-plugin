@@ -17,7 +17,7 @@ This plugin provides two new types of credentials:
 ## Usage
 
 These credentials were originally designed to be used together with the [Credentials Binding Plugin](https://plugins.jenkins.io/credentials-binding).
-See the [plugin](https://plugins.jenkins.io/credentials-binding){.external-link} for an example use case.
+See the [plugin](https://plugins.jenkins.io/credentials-binding) for an example use case.
 
 However, as described in the [Credentials Plugin](https://plugins.jenkins.io/credentials) documentation, they could potentially be used by any other plugin that requires them.
 

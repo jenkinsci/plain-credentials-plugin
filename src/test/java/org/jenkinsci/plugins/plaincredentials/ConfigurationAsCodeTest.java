@@ -4,12 +4,14 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import hudson.security.ACL;
-import io.jenkins.plugins.casc.ConfigurationAsCode;
+import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
+import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
@@ -17,17 +19,17 @@ import org.jvnet.hudson.test.JenkinsRule;
 public class ConfigurationAsCodeTest {
 
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public JenkinsConfiguredWithCodeRule j = new JenkinsConfiguredWithCodeRule();
 
     @Test
+    @ConfiguredWithCode("ConfigurationAsCode.yaml")
     public void should_configure_file_credentials() throws Exception {
-        ConfigurationAsCode.get().configure(getClass().getResource("ConfigurationAsCode.yaml").toString());
-        final FileCredentials credentials = CredentialsMatchers.firstOrNull(
+        FileCredentials credentials = CredentialsMatchers.firstOrNull(
                 CredentialsProvider.lookupCredentials(FileCredentials.class, j.jenkins, ACL.SYSTEM, (DomainRequirement) null),
                 CredentialsMatchers.withId("secret-file"));
-        Assert.assertNotNull(credentials);
-        Assert.assertEquals("Some secret file", credentials.getDescription());
-        Assert.assertEquals("my-secret-file", credentials.getFileName());
-        Assert.assertEquals("FOO_BAR", IOUtils.toString(credentials.getContent()));
+        assertNotNull(credentials);
+        assertEquals("Some secret file", credentials.getDescription());
+        assertEquals("my-secret-file", credentials.getFileName());
+        assertEquals("FOO_BAR", IOUtils.toString(credentials.getContent()));
     }
 }

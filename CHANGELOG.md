@@ -1,5 +1,13 @@
 ## Changelog
 
+### 1.7 and later
+
+Changelog moved to [GitHub Releases](https://github.com/jenkinsci/plain-credentials-plugin/releases)
+
+### Version 1.6 (28 January 2020)
+
+-   Chore: Remove trilead from credentials test
+
 ### Version 1.5 (2018-12-11)
 
 -   Compatibility with [Configuration as Code

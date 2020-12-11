@@ -48,9 +48,16 @@ public class BaseTest {
     }
     
     @Test
+    public void textBaseTest() throws IOException {
+        StringCredentialsImpl credential = new StringCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret Text", "password");
+        StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), credential.getSecret().getPlainText());
+        testCreateUpdateDelete(credential, updatedCredential);
+    }
+
+    @Test
     public void secretTextBaseTest() throws IOException {
         StringCredentialsImpl credential = new StringCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret Text", Secret.fromString("password"));
-        StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), credential.getSecret()); 
+        StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), credential.getSecret());
         testCreateUpdateDelete(credential, updatedCredential);
     }
     

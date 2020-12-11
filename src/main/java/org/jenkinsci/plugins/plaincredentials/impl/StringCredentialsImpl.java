@@ -39,7 +39,12 @@ public final class StringCredentialsImpl extends BaseStandardCredentials impleme
 
     private final @Nonnull Secret secret;
 
-    @DataBoundConstructor public StringCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull Secret secret) {
+    @DataBoundConstructor public StringCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull String secret) {
+        super(scope, id, description);
+        this.secret = Secret.fromString(secret);
+    }
+
+    public StringCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull Secret secret) {
         super(scope, id, description);
         this.secret = secret;
     }

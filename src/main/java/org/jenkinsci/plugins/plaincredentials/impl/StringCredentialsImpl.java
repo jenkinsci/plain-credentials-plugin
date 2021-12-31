@@ -28,8 +28,8 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
 import hudson.util.Secret;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -37,9 +37,9 @@ public final class StringCredentialsImpl extends BaseStandardCredentials impleme
 
     private static final long serialVersionUID = 4239232115673493707L;
 
-    private final @Nonnull Secret secret;
+    private final @NonNull Secret secret;
 
-    @DataBoundConstructor public StringCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @Nonnull Secret secret) {
+    @DataBoundConstructor public StringCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, @NonNull Secret secret) {
         super(scope, id, description);
         this.secret = secret;
     }

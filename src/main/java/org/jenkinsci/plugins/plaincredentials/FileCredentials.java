@@ -30,7 +30,7 @@ import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import hudson.Util;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Credentials consisting of a secret file.
@@ -43,14 +43,14 @@ public interface FileCredentials extends StandardCredentials {
      * For example, {@code private-keys.zip} or {@code keystore}.
      * @return a simple file name (no path separators)
      */
-    @Nonnull String getFileName();
+    @NonNull String getFileName();
 
     /**
      * Obtains the actual content of the secret file as a bytestream.
      * @return some binary data
      * @throws IOException if the data cannot be loaded
      */
-    @Nonnull InputStream getContent() throws IOException;
+    @NonNull InputStream getContent() throws IOException;
 
     class NameProvider extends CredentialsNameProvider<FileCredentials> {
 

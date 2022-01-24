@@ -21,12 +21,6 @@ See the [plugin](https://plugins.jenkins.io/credentials-binding) for an example 
 
 However, as described in the [Credentials Plugin](https://plugins.jenkins.io/credentials) documentation, they could potentially be used by any other plugin that requires them.
 
-# Environment
-
-The following build environment is required to build this plugin
-
-* `java-1.6` and `maven-3.0.5`
-
 # Build
 
 To build the plugin locally:

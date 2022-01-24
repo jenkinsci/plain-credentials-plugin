@@ -36,8 +36,8 @@ import java.io.ObjectStreamException;
 import java.security.GeneralSecurityException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import jenkins.security.CryptoConfidentialKey;
 import org.apache.commons.fileupload.FileItem;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
@@ -69,14 +69,14 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
     /**
      * The filename.
      */
-    @Nonnull
+    @NonNull
     private final String fileName;
     /**
      * The secret bytes.
      *
      * @since 1.3
      */
-    @Nonnull
+    @NonNull
     private final SecretBytes secretBytes;
     /**
      * The legacy encrypted version of the secret bytes.
@@ -101,7 +101,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      */
     @Deprecated
     public FileCredentialsImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
-                               @CheckForNull String description, @Nonnull FileItem file, @CheckForNull String fileName,
+                               @CheckForNull String description, @NonNull FileItem file, @CheckForNull String fileName,
                                @CheckForNull String data) throws IOException {
         super(scope, id, description);
         String name = file.getName();
@@ -175,8 +175,8 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      */
     public FileCredentialsImpl(@CheckForNull CredentialsScope scope,
                                @CheckForNull String id,
-                               @CheckForNull String description, @Nonnull String fileName,
-                               @Nonnull SecretBytes secretBytes) {
+                               @CheckForNull String description, @NonNull String fileName,
+                               @NonNull SecretBytes secretBytes) {
         super(scope, id, description);
         this.fileName = fileName;
         this.secretBytes = secretBytes;

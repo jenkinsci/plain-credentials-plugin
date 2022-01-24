@@ -32,7 +32,7 @@ import hudson.util.Secret;
 
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Credentials consisting only of a single secret, such as a password or token.
@@ -44,7 +44,7 @@ public interface StringCredentials extends StandardCredentials {
      * Returns the wrapped secret value.
      * @return the encrypted value
      */
-    @Nonnull Secret getSecret();
+    @NonNull Secret getSecret();
 
     class NameProvider extends CredentialsNameProvider<StringCredentials> {
 

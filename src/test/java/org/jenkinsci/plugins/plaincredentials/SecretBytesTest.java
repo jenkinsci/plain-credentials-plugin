@@ -35,8 +35,8 @@ import hudson.security.ACL;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.List;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
@@ -70,8 +70,8 @@ public class SecretBytesTest {
     @LocalData
     public void loadUnencrypted() throws Exception {
         // these are the magic strings
-        assumeThat(Base64.encodeBase64("This is Base64 encoded plain text\n".getBytes("UTF-8")), is(
-                "VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg==".getBytes("US-ASCII")));
+        assumeThat(Base64.getEncoder().encodeToString("This is Base64 encoded plain text\n".getBytes("UTF-8")), is(
+                "VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg=="));
 
         // first check that the file on disk contains the unencrypted text
         assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),

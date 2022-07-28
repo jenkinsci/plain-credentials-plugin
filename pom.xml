@@ -33,7 +33,7 @@
   </parent>
 
   <artifactId>plain-credentials</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${changelist}</version>
   <packaging>hpi</packaging>
 
   <name>Plain Credentials Plugin</name>
@@ -54,8 +54,7 @@
   </scm>
 
   <properties>
-    <revision>1.9</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <changelist>999999-SNAPSHOT</changelist>
     <jenkins.version>2.319.1</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
   </properties>

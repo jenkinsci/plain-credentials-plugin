@@ -49,7 +49,7 @@ public class BaseTest {
     @Test
     public void secretTextBaseTest() throws IOException {
         StringCredentialsImpl credential = new StringCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret Text", Secret.fromString("password"));
-        StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), CRED_ID, credential.getDescription(), credential.getSecret());
+        StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), CRED_ID, "Updated Secret Text", credential.getSecret());
         testCreateUpdateDelete(credential, updatedCredential);
     }
     
@@ -74,7 +74,7 @@ public class BaseTest {
             credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));
         }
 
-        FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
+        FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), CRED_ID, "Updated Secret File", fileItem, credential.getFileName(), credential.getSecretBytes());
         testCreateUpdateDelete(credential, updatedCredential);
     }
     
@@ -103,11 +103,12 @@ public class BaseTest {
         // Look up all credentials again
         credentials = CredentialsProvider.lookupCredentials(BaseStandardCredentials.class, r.jenkins, ACL.SYSTEM, Collections.<DomainRequirement>emptyList());
    
-        // There is still 1 credential but the ID has been updated
+        // There is still 1 credential but the description has been updated
         assertThat(credentials.size(), is(1));
         cred = credentials.get(0);
         assertThat(cred, instanceOf(credential.getClass()));
         assertThat(cred.getId(), is(CRED_ID));
+        assertThat(cred.getDescription(), is(updatedCredential.getDescription()));
         
         // Delete credential
         store.removeCredentials(Domain.global(), cred);

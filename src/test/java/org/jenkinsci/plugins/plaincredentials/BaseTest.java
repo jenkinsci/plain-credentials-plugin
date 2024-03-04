@@ -34,7 +34,6 @@ import static org.hamcrest.CoreMatchers.*;
 
 public class BaseTest {
 
-    private static final String UPDATED_CRED_ID = "Custom-ID-Updated";
     private static final String CRED_ID = "Custom-ID";
 
     @Rule
@@ -50,7 +49,7 @@ public class BaseTest {
     @Test
     public void secretTextBaseTest() throws IOException {
         StringCredentialsImpl credential = new StringCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret Text", Secret.fromString("password"));
-        StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), credential.getSecret()); 
+        StringCredentialsImpl updatedCredential = new StringCredentialsImpl(credential.getScope(), CRED_ID, credential.getDescription(), credential.getSecret());
         testCreateUpdateDelete(credential, updatedCredential);
     }
     
@@ -75,7 +74,7 @@ public class BaseTest {
             credential = new FileCredentialsImpl(CredentialsScope.GLOBAL, CRED_ID, "Test Secret file", fileItem, "keys.txt", SecretBytes.fromBytes(fileItem.get()));
         }
 
-        FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), UPDATED_CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
+        FileCredentialsImpl updatedCredential = new FileCredentialsImpl(credential.getScope(), CRED_ID, credential.getDescription(), fileItem, credential.getFileName(), credential.getSecretBytes());
         testCreateUpdateDelete(credential, updatedCredential);
     }
     
@@ -108,7 +107,7 @@ public class BaseTest {
         assertThat(credentials.size(), is(1));
         cred = credentials.get(0);
         assertThat(cred, instanceOf(credential.getClass()));
-        assertThat(cred.getId(), is(UPDATED_CRED_ID));
+        assertThat(cred.getId(), is(CRED_ID));
         
         // Delete credential
         store.removeCredentials(Domain.global(), cred);

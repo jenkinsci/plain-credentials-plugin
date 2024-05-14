@@ -4,14 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
 import com.cloudbees.plugins.credentials.SecretBytes;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.FileItem;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 import org.junit.Before;
@@ -26,6 +26,7 @@ import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 
+import hudson.model.FileParameterValue.FileItemImpl;
 import hudson.security.ACL;
 import hudson.util.Secret;
 
@@ -64,7 +65,7 @@ public class BaseTest {
     }
 
     private void secretFileTest(boolean useDeprecatedConstructor) throws IOException, URISyntaxException {
-        DiskFileItem fileItem = createEmptyFileItem();
+        FileItem fileItem = createEmptyFileItem();
 
         FileCredentialsImpl credential;
 
@@ -129,10 +130,7 @@ public class BaseTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    private DiskFileItem createEmptyFileItem() throws URISyntaxException, FileNotFoundException, IOException {
-        DiskFileItem fileItem = (DiskFileItem) new DiskFileItemFactory().createItem("fileData", "text/plain", true, "fileName");
-        OutputStream os = fileItem.getOutputStream();
-        os.flush();
-        return fileItem;
+    private FileItem createEmptyFileItem() throws IOException {
+        return new FileItemImpl(Files.createTempFile("credential-test", null).toFile());
     }
 }

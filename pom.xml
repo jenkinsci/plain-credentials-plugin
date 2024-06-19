@@ -55,7 +55,7 @@
 
   <properties>
     <changelist>999999-SNAPSHOT</changelist>
-    <jenkins.version>2.361.4</jenkins.version>
+    <jenkins.version>2.426.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
   </properties>
 
@@ -76,8 +76,8 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.361.x</artifactId>
-        <version>2102.v854b_fec19c92</version>
+        <artifactId>bom-2.426.x</artifactId>
+        <version>2961.v1f472390972e</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -88,6 +88,8 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
+      <!-- TODO: remove once this version is in bom -->
+      <version>1344.v5a_3f65a_1e173</version>
     </dependency>
 
     <dependency>

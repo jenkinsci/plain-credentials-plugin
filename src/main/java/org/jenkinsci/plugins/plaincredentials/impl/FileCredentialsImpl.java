@@ -143,7 +143,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
         String name = file != null ? file.getName() : "";
         if (name.length() > 0) {
             this.fileName = name.replaceFirst("^.+[/\\\\]", "");
-            this.secretBytes = SecretBytes.fromBytes(file.get());
+            this.secretBytes = SecretBytes.fromRawBytes(file.get());
         } else {
             if (secretBytes == null) {
                 throw new IllegalArgumentException("No content provided or resolved.");

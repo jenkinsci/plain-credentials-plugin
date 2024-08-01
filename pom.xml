@@ -88,10 +88,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <!-- TODO: remove once this version is in bom -->
-      <version>1344.v5a_3f65a_1e173</version>
     </dependency>
-
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>

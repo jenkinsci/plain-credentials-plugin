@@ -33,8 +33,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.io.Serial;
+
 public final class StringCredentialsImpl extends BaseStandardCredentials implements StringCredentials {
 
+    @Serial
     private static final long serialVersionUID = 4239232115673493707L;
 
     private final @NonNull Secret secret;

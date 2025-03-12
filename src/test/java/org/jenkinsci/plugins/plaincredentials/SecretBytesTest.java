@@ -34,7 +34,7 @@ import hudson.cli.CLICommandInvoker;
 import hudson.security.ACL;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
@@ -70,7 +70,7 @@ public class SecretBytesTest {
     @LocalData
     public void loadUnencrypted() throws Exception {
         // these are the magic strings
-        assumeThat(Base64.getEncoder().encodeToString("This is Base64 encoded plain text\n".getBytes("UTF-8")), is(
+        assumeThat(Base64.getEncoder().encodeToString("This is Base64 encoded plain text\n".getBytes(StandardCharsets.UTF_8)), is(
                 "VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg=="));
 
         // first check that the file on disk contains the unencrypted text
@@ -94,7 +94,7 @@ public class SecretBytesTest {
         assertThat(c.getDescription(), is("a line"));
 
         // now check that the content has been read correctly
-        assertThat(IOUtils.toString(c.getContent(), "UTF-8"), is("This is Base64 encoded plain text\n"));
+        assertThat(IOUtils.toString(c.getContent(), StandardCharsets.UTF_8), is("This is Base64 encoded plain text\n"));
 
         // now when we re-save the credentials this should encrypt with the instance's secret key
         SystemCredentialsProvider.getInstance().save();
@@ -103,7 +103,7 @@ public class SecretBytesTest {
     }
 
     /**
-     * Verifies that legacy data is converted correctly and that the new {@link SecretBytes} gets applied 
+     * Verifies that legacy data is converted correctly and that the new {@link SecretBytes} gets applied
      * when the {@link FileCredentialsImpl} is written to disk.
      * @throws Exception if things go wrong.
      */
@@ -131,7 +131,7 @@ public class SecretBytesTest {
         assertThat(c.getDescription(), is("credential using legacy data format"));
 
         // now check that the content has been converted
-        assertThat(IOUtils.toString(c.getContent(), "UTF-8"), is("This is a secret file from legacy encryption\n"));
+        assertThat(IOUtils.toString(c.getContent(), StandardCharsets.UTF_8), is("This is a secret file from legacy encryption\n"));
 
         // now when we re-save the credentials this should persist in the new format
         SystemCredentialsProvider.getInstance().save();
@@ -156,15 +156,17 @@ public class SecretBytesTest {
         // create the credentials
         CreateCredentialsByXmlCommand cmd = new CreateCredentialsByXmlCommand();
         CLICommandInvoker invoker = new CLICommandInvoker(r, cmd);
-        assertThat(invoker.withStdin(new ByteArrayInputStream(("<?xml version='1.0' encoding='UTF-8'?>\n"
-                        + "<org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl>\n"
-                        + "  <scope>GLOBAL</scope>\n"
-                        + "  <id>secret-file</id>\n"
-                        + "  <description>a line</description>\n"
-                        + "  <fileName>secret.txt</fileName>\n"
-                        + "  <secretBytes>VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg==</secretBytes>\n"
-                        + "</org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl>\n")
-                        .getBytes(Charset.forName("UTF-8"))))
+        assertThat(invoker.withStdin(new ByteArrayInputStream(("""
+                                <?xml version='1.0' encoding='UTF-8'?>
+                                <org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl>
+                                  <scope>GLOBAL</scope>
+                                  <id>secret-file</id>
+                                  <description>a line</description>
+                                  <fileName>secret.txt</fileName>
+                                  <secretBytes>VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg==</secretBytes>
+                                </org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl>
+                                """)
+                        .getBytes(StandardCharsets.UTF_8)))
                         .invokeWithArgs("system::system::jenkins", "_"),
                 succeededSilently());
 
@@ -185,7 +187,7 @@ public class SecretBytesTest {
         assertThat(c.getDescription(), is("a line"));
 
         // now check that the content has been read correctly
-        assertThat(IOUtils.toString(c.getContent(), "UTF-8"), is("This is Base64 encoded plain text\n"));
+        assertThat(IOUtils.toString(c.getContent(), StandardCharsets.UTF_8), is("This is Base64 encoded plain text\n"));
 
         // now when we re-save the credentials this should encrypt with the instance's secret key
         SystemCredentialsProvider.getInstance().save();

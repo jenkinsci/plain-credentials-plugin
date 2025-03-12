@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectStreamException;
+import java.io.Serial;
 import java.security.GeneralSecurityException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,6 +65,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
     /**
      * Standardize serialization (this value is for the 1.2 version of the class).
      */
+    @Serial
     private static final long serialVersionUID = -7448141713963432962L;
 
     /**
@@ -115,7 +117,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
         if (this.fileName == null || this.fileName.isEmpty()) {
             throw new IllegalArgumentException(
                     String.format("No FileName was provided or resolved. " +
-                            "Input file item was %s and input file name was %s.", file.toString(), fileName)
+                            "Input file item was %s and input file name was %s.", file, fileName)
             );
         }
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -188,6 +190,7 @@ public final class FileCredentialsImpl extends BaseStandardCredentials implement
      * @return the object.
      * @throws ObjectStreamException if the data cannot be migrated.
      */
+    @Serial
     private Object readResolve() throws ObjectStreamException {
         if (data != null) {
             // migrate legacy data

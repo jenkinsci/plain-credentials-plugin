@@ -57,6 +57,9 @@ public final class StringCredentialsImpl extends BaseStandardCredentials impleme
             return Messages.StringCredentialsImpl_secret_text();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String getIconClassName(){
             return "symbol-details";

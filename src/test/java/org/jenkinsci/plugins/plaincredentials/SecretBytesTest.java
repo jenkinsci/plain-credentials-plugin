@@ -29,37 +29,36 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.SecretBytes;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.cli.CreateCredentialsByXmlCommand;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import hudson.cli.CLICommandInvoker;
 import hudson.security.ACL;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
+import org.jvnet.hudson.test.recipes.LocalData;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.recipes.LocalData;
 
 import static hudson.cli.CLICommandInvoker.Matcher.succeededSilently;
-import hudson.util.RobustReflectionConverter;
-import java.util.logging.Level;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import org.jvnet.hudson.test.LoggerRule;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SecretBytesTest {
+@WithJenkins
+class SecretBytesTest {
 
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+    private JenkinsRule r;
 
-    @Rule
-    public LoggerRule logging = new LoggerRule().record(RobustReflectionConverter.class, Level.FINE);
+    @BeforeEach
+    void setup(JenkinsRule rule) {
+        r = rule;
+    }
 
     /**
      * Verifies that {@link SecretBytes} will treat a Base64 encoded plain text content as the content to be encrypted
@@ -68,22 +67,22 @@ public class SecretBytesTest {
      */
     @Test
     @LocalData
-    public void loadUnencrypted() throws Exception {
+    void loadUnencrypted() throws Exception {
         // these are the magic strings
-        assumeThat(Base64.getEncoder().encodeToString("This is Base64 encoded plain text\n".getBytes(StandardCharsets.UTF_8)), is(
+        assumeTrue(Base64.getEncoder().encodeToString("This is Base64 encoded plain text\n".getBytes(StandardCharsets.UTF_8)).equals(
                 "VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg=="));
 
         // first check that the file on disk contains the unencrypted text
-        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
+        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml"), StandardCharsets.UTF_8),
                 containsString("VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg=="));
 
         // get the credential instance under test
         FileCredentials c = CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(
+                CredentialsProvider.lookupCredentialsInItemGroup(
                         FileCredentials.class,
                         r.jenkins,
-                        ACL.SYSTEM,
-                        (List<DomainRequirement>) null
+                        ACL.SYSTEM2,
+                        null
                 ),
                 CredentialsMatchers.withId("secret-file")
         );
@@ -98,7 +97,7 @@ public class SecretBytesTest {
 
         // now when we re-save the credentials this should encrypt with the instance's secret key
         SystemCredentialsProvider.getInstance().save();
-        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
+        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml"), StandardCharsets.UTF_8),
                 not(containsString("VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg==")));
     }
 
@@ -109,18 +108,18 @@ public class SecretBytesTest {
      */
     @Test
     @LocalData
-    public void migrateLegacyData() throws Exception {
+    void migrateLegacyData() throws Exception {
         // first check that the file on disk contains the legacy format
-        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
+        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml"), StandardCharsets.UTF_8),
                 allOf(containsString("</data>"), not(containsString("</secretBytes>"))));
 
         // get the credential instance under test
         FileCredentials c = CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(
+                CredentialsProvider.lookupCredentialsInItemGroup(
                         FileCredentials.class,
                         r.jenkins,
-                        ACL.SYSTEM,
-                        (List<DomainRequirement>) null
+                        ACL.SYSTEM2,
+                        null
                 ),
                 CredentialsMatchers.withId("legacyData")
         );
@@ -135,19 +134,19 @@ public class SecretBytesTest {
 
         // now when we re-save the credentials this should persist in the new format
         SystemCredentialsProvider.getInstance().save();
-        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
+        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml"), StandardCharsets.UTF_8),
                 allOf(not(containsString("</data>")), containsString("</secretBytes>")));
     }
 
     @Test
-    public void createFileCredentialsByXml() throws Exception {
+    void createFileCredentialsByXml() throws Exception {
         // get the credential instance doesn't exist yet
         FileCredentials c = CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(
+                CredentialsProvider.lookupCredentialsInItemGroup(
                         FileCredentials.class,
                         r.jenkins,
-                        ACL.SYSTEM,
-                        (List<DomainRequirement>) null
+                        ACL.SYSTEM2,
+                        null
                 ),
                 CredentialsMatchers.withId("secret-file")
         );
@@ -172,11 +171,11 @@ public class SecretBytesTest {
 
         // get the credential instance under test
         c = CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(
+                CredentialsProvider.lookupCredentialsInItemGroup(
                         FileCredentials.class,
                         r.jenkins,
-                        ACL.SYSTEM,
-                        (List<DomainRequirement>) null
+                        ACL.SYSTEM2,
+                        null
                 ),
                 CredentialsMatchers.withId("secret-file")
         );
@@ -191,7 +190,7 @@ public class SecretBytesTest {
 
         // now when we re-save the credentials this should encrypt with the instance's secret key
         SystemCredentialsProvider.getInstance().save();
-        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml")),
+        assertThat(FileUtils.readFileToString(new File(r.jenkins.getRootDir(), "credentials.xml"), StandardCharsets.UTF_8),
                 not(containsString("VGhpcyBpcyBCYXNlNjQgZW5jb2RlZCBwbGFpbiB0ZXh0Cg==")));
     }
 

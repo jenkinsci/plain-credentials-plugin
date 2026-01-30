@@ -28,32 +28,30 @@ import com.cloudbees.plugins.credentials.SecretBytes;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import org.jvnet.hudson.test.JenkinsRule;
 
-public class FileCredentialsTest {
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+@WithJenkins
+class FileCredentialsTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     @Issue("JENKINS-30926")
-    public void shouldThrowAnExceptionIfFileNameIsBlank() throws IOException {
-        new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "", new StubFileItem(), "", SecretBytes.fromString(""));
+    void shouldThrowAnExceptionIfFileNameIsBlank(JenkinsRule r) {
+        assertThrows(IllegalArgumentException.class, () -> new FileCredentialsImpl(CredentialsScope.GLOBAL, "1", "", new StubFileItem(), "", SecretBytes.fromString("")));
     }
 
-    private class StubFileItem implements FileItem {
+    private static class StubFileItem implements FileItem {
 
         @Override
-        public InputStream getInputStream() throws IOException {
+        public InputStream getInputStream() {
             return null;
         }
 
@@ -83,7 +81,7 @@ public class FileCredentialsTest {
         }
 
         @Override
-        public String getString(String encoding) throws UnsupportedEncodingException {
+        public String getString(String encoding) {
             return null;
         }
 
@@ -93,7 +91,7 @@ public class FileCredentialsTest {
         }
 
         @Override
-        public void write(File file) throws Exception {
+        public void write(File file) {
 
         }
 
@@ -123,7 +121,7 @@ public class FileCredentialsTest {
         }
 
         @Override
-        public OutputStream getOutputStream() throws IOException {
+        public OutputStream getOutputStream() {
             return null;
         }
 

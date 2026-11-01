@@ -31,6 +31,7 @@ import hudson.util.Secret;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.Serial;
@@ -51,6 +52,7 @@ public final class StringCredentialsImpl extends BaseStandardCredentials impleme
         return secret;
     }
 
+    @Symbol("string")
     @Extension public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
 
         @Override public String getDisplayName() {
